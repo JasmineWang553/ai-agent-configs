@@ -2,5 +2,7 @@
 
 @~/.claude/rules/ponytail.md
 @~/.claude/rules/short.md
-@~/.claude/rules/maven-charter-cert.md
-@~/.claude/rules/project-sync.md
+
+On demand (read the file when the task needs it; not loaded into every session):
+- Before any `mvn` run on a Charter repo: `~/.claude/rules/maven-charter-cert.md`
+- Before reading or changing a repo in `~/Desktop/projects/`: `~/.claude/rules/project-sync.md`

@@ -6,7 +6,9 @@ description: Team workflow shared by every team agent (planning-lead, planner, d
 # Team workflow — shared by every agent
 
 Who does what, where files live, how work is handed back. The two leads also follow skill `lead-playbook`.
-What good work looks like: skill `engineering-standards`. If an agent prompt disagrees with these skills, these skills win.
+What good work looks like: the engineering standards skills `es-core`, `es-code`, `es-config`, `es-release`,
+`es-tests`, split by role; each agent preloads only its parts. If an agent prompt disagrees with these skills, these
+skills win.
 
 ## Roles
 
@@ -14,9 +16,10 @@ What good work looks like: skill `engineering-standards`. If an agent prompt dis
 |---|---|---|
 | `planning-lead` | Opus | `requirement.md`, `plan.md`, `status.md`, `T<n>/overview.md`, empty task files |
 | `planner` ×2 | Opus | `planning/*` |
-| `delivery-lead` | Opus | `status.md`, gate sections of `review.md`, `T<n>/notes/*`, worktrees, merges, push |
-| `test-designer` | Opus | `T<n>/test-design.md`, `T<n>/notes/td-*` |
-| `architect` | Opus | `T<n>/architecture.md`, `T<n>/notes/ar-*` |
+| `delivery-lead` | Opus | `status.md`, `T<n>/notes/*` (not gate or reviewer files), worktrees, merges, push |
+| `gate` | Sonnet | gate sections of `review.md`, `T<n>/notes/gate-*`, `T<n>/notes/rework-*`, `T<n>/notes/trace.md` |
+| `test-designer` | Sonnet | `T<n>/test-design.md`, `T<n>/notes/td-*` |
+| `architect` | Opus | `T<n>/architecture.md`, `T<n>/notes/ar-*` (only when the overview says `Architect: yes`) |
 | `developer` ×1-3 | Sonnet | code, tests and config in its own worktrees, `T<n>/notes/dev-<x>.md` |
 | `reviewer` | Opus | reviewer sections and top tables of `review.md`, `T<n>/notes/rv-*` |
 
@@ -47,6 +50,12 @@ write and shell limits per role.
 
 The four files "for you" use the templates in `~/.claude/team/templates/`. Keep the headings. Put the conclusion first and
 prefer tables to prose. Keep logs and raw output out of them; those go in `notes/`.
+
+## Reading results (lean flow)
+
+Every result file starts with its verdict on line 1 (`RESULT:`, `GATE G1 round <n>: PASS|FAIL`, `G2-SCRIPT: PASS|FAIL`,
+`**Verdict: …**`). Readers open the rest of a file only when line 1 is not a pass, or when the user asks. Write your
+first lines so they can be trusted on their own.
 
 ## IDs
 

@@ -72,7 +72,7 @@ Map the real code into these layers. Each layer uses only the layers below it.
 10. Stop. Wait for the user to say "next".
 
 ## Build
-Follow `~/.claude/rules/maven-charter-cert.md` (loaded from CLAUDE.md) before every `mvn` run:
+Follow `~/.claude/rules/maven-charter-cert.md` (read it first; it is not preloaded) before every `mvn` run:
 - Set `JAVA_HOME` to the JDK that matches the pom.
 - Use the per-JDK trust store for `artifactory.se-charter.net`.
 - Build: `mvn -Djavax.net.ssl.trustStore=... -Djavax.net.ssl.trustStorePassword=changeit clean verify`

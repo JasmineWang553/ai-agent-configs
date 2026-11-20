@@ -1,0 +1,17 @@
+# Deterministic rule checks, run by ~/.claude/scripts/rule-check.sh on ADDED lines only (old code never fails).
+# One rule per line, TAB-separated: id  severity(error|warn)  scope  match  unless  message
+# scope: main = src/main/**.java, test = src/test/**, java = *.java, config = *.yml|*.yaml|*.properties, code = java+config
+# match/unless: POSIX ERE (no \b or \s; use [[:space:]] and (^|[^A-Za-z])). unless '-' = none.
+# error fails G2; warn is listed for the gate to judge. To automate a repeated review finding, add a line here.
+no-field-injection	error	java	@Autowired	-	Constructor injection with final fields; no @Autowired (es-code: Code rules).
+no-console-output	error	main	System\.(out|err)\.|\.printStackTrace\(	-	Debug output in main code: use the repo logger.
+inject-clock	error	main	(System\.currentTimeMillis|Instant\.now|LocalDateTime\.now|LocalDate\.now|ZonedDateTime\.now|OffsetDateTime\.now)\([[:space:]]*\)	-	Inject Clock for anything time-based; no now() without a clock.
+no-delete-on-exit	error	main	\.deleteOnExit\(	-	Delete temp files in finally; no deleteOnExit() in a long-running service.
+no-star-import	error	java	^import[[:space:]].*\.\*;	-	Import classes, not packages.
+empty-catch	error	java	catch[[:space:]]*\([^)]*\)[[:space:]]*\{[[:space:]]*\}	-	Empty catch: handle, rethrow or classify the failure.
+no-todo	error	code	(^|[^A-Za-z])(TODO|FIXME|XXX)([^A-Za-z]|$)	-	Untracked TODO: use '// shortcut: <risk>, <when to upgrade>' plus a plan.md Follow-ups row.
+plain-secret	error	config	(password|secret|api[-_]?key|token)[[:space:]]*[:=][[:space:]]*[^[:space:]$]{6,}	\$\{|ENC\(|vault:|<[a-z-]+>|changeit	Plain-text secret in config: use the repo's secret source.
+no-ticket-ref	warn	java	(//|/\*|^[[:space:]]*\*).*[A-Z][A-Z0-9]+-[0-9]+	UTF-8|ISO-8859|SHA-[0-9]|AES-[0-9]|RFC-?[0-9]|X-[A-Z]	Ticket refs belong in <work> files, not code comments.
+no-process-note	warn	java	(//|/\*|^[[:space:]]*\*).*([Pp]arity|[Uu]ser decision|[Pp]er review|[Rr]eviewer|[Aa]s discussed)	-	Process notes belong in <work> files, not code comments.
+commented-out-code	warn	java	^[[:space:]]*//.*[;{}][[:space:]]*$	-	Looks like commented-out code: delete it.
+csv-source-pipe	warn	test	@CsvSource	delimiter[[:space:]]*=[[:space:]]*'\|'	Parameterized tests use @CsvSource with | as the delimiter.

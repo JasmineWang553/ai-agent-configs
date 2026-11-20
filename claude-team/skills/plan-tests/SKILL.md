@@ -5,7 +5,7 @@ description: Generate specific, executable test points covering normal, exceptio
 
 # Plan Tests
 
-> Not for team runs: the `test-designer` agent follows skill `engineering-standards` and the
+> Not for team runs: the `test-designer` agent follows skills `es-tests` and `es-core` and the
 > `test-design.md` template instead. Use this skill only for ad-hoc test planning in a direct chat.
 
 Write specific, executable test points. No vague text. Keep each test case description short.

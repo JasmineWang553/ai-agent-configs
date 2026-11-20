@@ -9,6 +9,7 @@ Round: <n> | Source: overview.md (T<n>-AC1..ACk)
 |---|---|---|---|---|---|---|
 | unit | | | | | | |
 | cucumber | | | | | | |
+| integration (only if Verification: integration) | | | | | | |
 
 `n/a` lines (with reason): Destructive: … | Security: … | Contract: …
 
@@ -22,7 +23,7 @@ Round: <n> | Source: overview.md (T<n>-AC1..ACk)
 
 ### T<n>-TC01 <behavior in plain words>
 - Type / Kind: Positive / happy
-- Layer: unit | cucumber
+- Layer: unit | cucumber | integration
 - Target: <existing class#method or endpoint `path:line`> | `new: <purpose>`
 - Preconditions:
 - Steps:

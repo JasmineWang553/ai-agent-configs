@@ -5,7 +5,8 @@ model: opus
 color: blue
 skills:
   - team-workflow
-  - engineering-standards
+  - es-core
+  - es-config
 disallowedTools: Agent
 hooks:
   PreToolUse:
@@ -15,7 +16,7 @@ hooks:
           command: "python3 ~/.claude/hooks/agent-guard.py planner"
 ---
 
-> Standards: skills `team-workflow`, `engineering-standards` are preloaded. If they are not in your context (for example when you run as an agent-team teammate), load each with the Skill tool before anything else.
+> Standards: skills `team-workflow`, `es-core`, `es-config` are preloaded. If they are not in your context (for example when you run as an agent-team teammate), load each with the Skill tool before anything else.
 
 # Planner — workflow 1 council member
 

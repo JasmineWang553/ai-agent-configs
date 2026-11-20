@@ -70,6 +70,11 @@ ROLES = {
         write_deny=T("*.md") + [f"{WORK}/*/*.md", f"{PROJECTS}/**"],
         shell_deny=DESTRUCTIVE + INTEGRATE + ["git checkout*", "git -C * checkout*", "git switch*", "git -C * switch*"],
     ),
+    "gate": dict(
+        write_allow=T("review.md", "trace.md", "notes/gate-*.md", "notes/rework-*.md", "notes/trace.md", "notes/signals/**"),
+        write_deny=T("overview.md", "test-design.md", "architecture.md") + [f"{PROJECTS}/**", f"{WORK}/*/wt/**"],
+        shell_deny=DESTRUCTIVE + INTEGRATE + NO_COMMIT_NO_BUILD,
+    ),
     "reviewer": dict(
         write_allow=T("review.md", "notes/rv-*.md", "notes/signals/**"),
         write_deny=T("overview.md", "test-design.md", "architecture.md") + [f"{PROJECTS}/**", f"{WORK}/*/wt/**"],
@@ -78,7 +83,7 @@ ROLES = {
                                               "git revert*"],
     ),
 }
-WORKERS = {"planner", "test-designer", "architect", "developer", "reviewer"}
+WORKERS = {"planner", "test-designer", "architect", "developer", "reviewer", "gate"}
 
 
 def path_glob(pattern):

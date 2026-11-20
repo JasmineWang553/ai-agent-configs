@@ -10,47 +10,47 @@ The mechanics both leads share: running role agents, checking their work, status
 ## Running a role agent (teammate)
 
 Agent teams are on (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`). Your session is the team lead. Role agents are
-teammates built from the definitions in `~/.claude/agents/` (`planner`, `test-designer`, `architect`, `developer`,
-`reviewer`). With `teammateMode: "auto"` each teammate opens in its own iTerm2 split pane (needs the `it2` CLI and the
-iTerm2 Python API; otherwise they run in-process and the user picks them in the agent panel). Always pass absolute
-paths (no `~`) in messages.
+teammates built from the definitions in `~/.claude/agents/` (`planner`, `test-designer`, `architect`, `gate`,
+`developer`, `reviewer`). With `teammateMode: "auto"` each teammate opens in its own iTerm2 split pane (needs the `it2`
+CLI and the iTerm2 Python API; otherwise they run in-process and the user picks them in the agent panel). Always pass
+absolute paths (no `~`) in messages.
 
 1. **Write the message** to `<dir>/msg/<role>-r<n>.txt`, where `<dir>` is `<work>/planning` or `<work>/T<n>/notes`.
    Write one paragraph: the work path, the task, the mode, the files to read, and the signal file
    `<dir>/signals/<role>-r<n>.done`. The round number `r<n>` goes in every name, so an old signal never counts.
-   Start the message with: "Load skills `team-workflow` and `engineering-standards` first" (teammates don't get the
-   definition's preloaded skills).
+   Start the message with: "Load your standards skills first" (teammates don't get the definition's preloaded skills).
 2. **Spawn the teammate:** Agent tool with `subagent_type: <role>` **and** `name: <key>` (table below). The name makes it
    a teammate, and it is the address for every later message. Spawn parallel teammates in one message. Tell the user in
    one line which teammates you started and what you are waiting for.
 3. **Track the work in the shared task list:** one task per message (`<key> r<n>: <mode>`), owned by that teammate,
-   with dependencies where one step needs another (architect after G1 rework, dev-b after dev-a). `status.md` stays the
-   source of truth; the task list is the live view (Ctrl+T).
+   with dependencies where one step needs another. `status.md` stays the source of truth; the task list is the live
+   view (Ctrl+T).
 4. **Wait.** Teammates notify you when they go idle, with their final answer. Never do a teammate's work yourself while
    it is running. Record `<key> | <round> | spawned <date>` in `<dir>/agents.md`.
 5. **Rework / next round:** `SendMessage` to the teammate's name with the new message. It keeps its context.
    After a lead restart (`/resume` does not restore teammates), spawn a fresh teammate with the same name and tell it to
    read the newest rework file and its own earlier output first.
-6. **Check the result:** the final answer ends with the `RESULT:` block, and the signal file must exist. No signal file
-   counts as `BLOCKED` (message the teammate once, then tell the user).
+6. **Check the result:** read line 1 only (see "Checking agent output"). No signal file counts as `BLOCKED` (message
+   the teammate once, then tell the user).
 
 | key (teammate name) | agent |
 |---|---|
 | `planner-slicing` | planner (lens slicing) |
 | `planner-risk` | planner (lens risk) |
 | `T<n>-test-designer` | test-designer |
-| `T<n>-architect` | architect |
+| `T<n>-architect` | architect (only when `Architect: yes`) |
+| `T<n>-gate` | gate (G1, G2) |
 | `T<n>-dev-a` / `-dev-b` / `-dev-c` | developer |
 | `T<n>-reviewer` | reviewer |
 
 **Talking between teammates.** Teammates may message each other by name for a quick clarification (the developer asks
 the architect what a signature means; the test-designer and architect align names). Anything that changes a file, a
-decision or a rework item still goes through you, and the answer is recorded in the owner's output file. In critique
-rounds, tell the two planners to send each other their critique and answer the other's points before they finish.
+decision or a rework item still goes through you or the gate, and the answer is recorded in the owner's output file.
+In critique rounds, tell the two planners to send each other their critique and answer the other's points first.
 
 | What happened | What you do |
 |---|---|
-| RESULT block + signal file | Check the output |
+| RESULT block + signal file | Read line 1 of the output |
 | `NEEDS_DECISION` | Put the questions to the user in one block, with options and your recommendation |
 | `BLOCKED`, or no signal file | Read the reason. Fix the input and re-send once, or ask the user |
 | Teammate stopped on an error | Message it with the next step; a second stop: spawn a replacement and tell the user |
@@ -86,10 +86,15 @@ ready for approval, and approved.
 
 Keep posts to status, IDs, counts and file paths. No code, diffs, secrets or customer data.
 
-## Checking agent output
+## Checking agent output (lean)
 
-A result block is only a claim. Open the files it lists. Open every `path:line` your decision depends on. Run tests
-yourself before you trust a number.
+The checking is done by the gate teammate (G1, G2) and `g2-check.sh` (builds, diff, rule checks, IDs), not by you.
+You read **line 1** of each result: the RESULT block, the gate file, the g2 file, the review verdict. Open more only
+when line 1 is not a pass, a line says `Needs user:`, the user asks, or two results disagree (for example a gate PASS
+and a reviewer BLOCKER on the same point). Never re-run a build the script already ran on the same sha.
+
+Why: everything you read stays in your context and is re-sent on every turn. A teammate's context is thrown away
+when it shuts down; yours is not.
 
 ## status.md
 
@@ -146,7 +151,14 @@ Before the push, `notes/` is the working folder: never tidy it earlier, because 
 3. Pack everything else into `notes/archive.tgz`: `tar -czf archive.tgz <files>` (dev-*, rv-*, td-*, ar-*, rework-*,
    mr-feedback-*, agents.md, drafts). Then remove the packed files, `msg/`, `signals/` and raw build logs: move them to
    `/tmp/claude-trash/` (the safe-delete hook backs up `rm` targets there too).
-4. Result: `notes/` holds only `trace.md`, `decisions.md`, `archive.tgz`. Tell the user in one line.
+4. **Lessons (correct once, then automate):** for every reviewer finding and gate rework item of the task, append one
+   line to `~/Desktop/work/lessons.md` (shared by all work folders, create it if missing):
+   `<date> | <slug> T<n> | <Rule> | <finding ID> | <one-line problem>`. Then count each `Rule` over the whole file.
+   A rule seen in **2 or more tasks** that is not in `~/.claude/checks/rules.tsv` yet: propose it to the user in one
+   block: the rule, the tasks, and either a draft `rules.tsv` line (id, severity, scope, match, unless, message) you
+   tested with `rule-check.sh` on this task's worktree, or "can't be a pattern check: <ArchUnit test | lint rule |
+   keep in prose>, because <reason>". Never edit `rules.tsv` or the standards yourself; the user adds the line.
+5. Result: `notes/` holds only `trace.md`, `decisions.md`, `archive.tgz`. Tell the user in one line.
 
 A later rework or MR-feedback round on a pushed task starts new working files next to them; tidy again after its push.
 
@@ -159,6 +171,7 @@ Teammates have their own context, but every message you exchange with them lands
 - **Watch the context** (`/context`). Past about 60%: run `/compact` at the next idle moment. Past about 75%: write the
   state to `status.md` and `T<n>/notes/`, tell the user, and ask to restart fresh with `resume <slug> T<n>`.
 - **Teammates are per task.** The next task (new lead session) spawns fresh teammates.
+- **Read line 1 first** ("Checking agent output"). Reading full gate files, diffs or build logs is the main token cost of a lead.
 - **Never run two leads on the same work folder.**
 
 ## Human gates
