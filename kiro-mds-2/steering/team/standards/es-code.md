@@ -4,7 +4,12 @@ Part of the engineering standards, split by role (`~/.kiro/steering/team/standar
 
 ## Code rules
 
-- Constructor injection with final fields; Lombok `@RequiredArgsConstructor` where the repo uses it. No field injection.
+**Enforced by checks** (`~/.kiro/checks/rules.tsv`, run by `rule-check.sh` on added lines; run it yourself before you
+finish): no `@Autowired`, no `System.out`/`printStackTrace`, no `now()` without a `Clock`, no `deleteOnExit()`, no star
+imports, no empty catch, no TODO/FIXME, no plain-text secrets in config; warnings for ticket refs, process notes and
+commented-out code in comments. The bullets below are the rules a check can't decide.
+
+- Constructor injection with final fields; Lombok `@RequiredArgsConstructor` where the repo uses it.
 - `var` where the type is obvious. Import classes rather than writing fully qualified names inline.
 - No magic strings or numbers: use constants or enums (`HttpStatus.TOO_MANY_REQUESTS`, not `429`). A one-use local
   index or name (array index, a map key read once, a log label) stays inline; no constant for it.
@@ -21,7 +26,6 @@ Part of the engineering standards, split by role (`~/.kiro/steering/team/standar
 - Keep layers thin and uniform: a controller or listener only delegates. Every method of a client wrapper has the
   same shape: build request -> get token -> log -> call -> check status.
 - Prefer deleting a branch, filter or rule over adding a new one when that is the fix.
-- Inject `Clock` for anything time-based. No `System.currentTimeMillis()` / `Instant.now()` in logic.
 - Comments only for a non-obvious why or a constraint. No process notes in code ("parity", "user decision",
   ticket or review refs); those go in `<work>` files.
 - A known risk or limit in code gets one line: `// shortcut: <the risk or limit>, <when to upgrade>`. State the
@@ -60,7 +64,7 @@ Part of the engineering standards, split by role (`~/.kiro/steering/team/standar
   - a rerun after a partial failure gives the same result (idempotent rerun);
   - two runs at once do not corrupt each other: one session or lock per run;
   - write down the partial-failure result: what is done, what is not, what the caller or the next run sees;
-  - delete temp files in `finally`; no `deleteOnExit()` in a long-running service;
+  - delete temp files in `finally`;
   - never load an unbounded file into memory: stream it.
 - **Security in code** (host-key and certificate checks, file names from outside in paths, input checks, auth): follow
   the pattern the repo already uses, cited as `path:line`. If there is no pattern to follow, do not

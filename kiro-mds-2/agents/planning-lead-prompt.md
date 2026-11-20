@@ -54,6 +54,7 @@ Run a second round only if round 1 changed the task structure (a split, a merge,
 | P9 | Conventions asked once per work item and written in `requirement.md`: CHANGELOG version per task, internal-ID policy, base and MR target branch. |
 | P10 | Ask once: is this a migration? Write `Migration: yes (<V1 repo>)` or `Migration: no` in `requirement.md`. If yes, apply `~/.kiro/team/migration-rules.md`. Every task states its deploy-file impact (`values*.yaml`, secret mounts, env lists), or `Deploy: none (reason)`. |
 | P11 | Every task sets `Architect: yes/no` with a reason. `no` only if all hold: size S, one repo, one developer, no new class, public signature, config key, message/API/document contract, DB query or external call. Then "Existing patterns to follow" names the exact file and method to change. When unsure: `yes`. |
+| P12 | Every task sets `Verification`. `integration` when the task changes a Kafka/SQS/DB flow's retry, duplicate, idempotency, DLT/DLQ or partial-failure behavior and is size M/L or risk high, and the repo can run Testcontainers (Docker). Otherwise `standard`. Name the infra. |
 
 Fix what you can. Anything that needs a business choice becomes an open question.
 

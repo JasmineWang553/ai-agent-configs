@@ -29,13 +29,31 @@ mkdir -p ~/.kiro/steering/team/standards ~/.kiro/scripts
 cp steering/*.md ~/.kiro/steering/
 cp steering/team/workflow.md ~/.kiro/steering/team/
 cp steering/team/standards/*.md ~/.kiro/steering/team/standards/
-cp scripts/g2-check.sh ~/.kiro/scripts/ && chmod +x ~/.kiro/scripts/g2-check.sh
+cp scripts/g2-check.sh scripts/rule-check.sh ~/.kiro/scripts/ && chmod +x ~/.kiro/scripts/g2-check.sh ~/.kiro/scripts/rule-check.sh
+mkdir -p ~/.kiro/checks && cp checks/rules.tsv ~/.kiro/checks/
 # the old single file and the symlinks must go, or agents load them again via the old globs:
 rm ~/.kiro/steering/team/engineering-standards.md ~/.kiro/steering/team/maven-charter-cert.md ~/.kiro/steering/team/project-sync.md
 ```
 
 Your existing scripts (`agent-pane.sh`, `wait-agents.sh`, `webex-notify.py`, `safe-delete.py`, `git-hooks/commit-msg`)
 are still used and are not in this folder; keep them in `~/.kiro/scripts/`.
+
+## Added from Lauren Tan's method
+
+Her rule: when you correct an agent, don't add more prose; make it a deterministic check or design the mistake away.
+
+| Idea | What it does here | Files |
+|---|---|---|
+| 7. Rules → checks | `rule-check.sh` checks only the lines a task **adds** against `checks/rules.tsv` (no `@Autowired`, no `System.out`, `Clock` for time, no empty catch, no star imports, no TODOs, no plain-text secrets; warnings for ticket refs, process notes, commented-out code). `error` fails G2, `warn` goes to the gate. Developers run it before they finish. The matching bullets are removed from `es-code.md` | `checks/rules.tsv`, `scripts/rule-check.sh`, `g2-check.sh`, `es-code.md` |
+| 8. Correct once, then automate | Reviewer findings and gate rework items carry `Rule: <name>`. After each push the lead logs them to `~/Desktop/work/lessons.md`; a rule seen in 2+ tasks gets a proposed `rules.tsv` line (tested), or a reason why it can't be a pattern check | `reviewer-prompt.md`, `gate-prompt.md`, `lead-playbook.md` |
+| 9. Prove it against the real thing | New overview field `Verification: standard / integration` (planning check **P12**). Integration = Testcontainers (Kafka, LocalStack, MongoDB) inside `mvn verify`, config repo files instead of the config server, snapshots via `settings.xml` or local `install`. Only for risky M/L message or data flows. `g2-check.sh` fails fast if Docker is down | `team/verification.md`, `es-tests.md`, templates, `planning-lead`, `test-designer`, `developer`, `gate` |
+| 10. Restate first | Test-designer, architect and developer write `## Restated task` before working; a mismatch → `NEEDS_DECISION`. Gate check G1.0 compares it with the overview | role prompts, `gate-prompt.md` |
+
+Not taken: multi-model reviews (too expensive) and UI tooling / feature maps (backend services).
+
+**Adding a check** (when the lead proposes one, or you're tired of a review comment): add one TAB-separated line to
+`~/.kiro/checks/rules.tsv`, then test it: `~/.kiro/scripts/rule-check.sh <worktree> <base>`. Patterns are POSIX ERE
+(use `[[:space:]]`, not `\s`). Start new rules as `warn`; make them `error` once they have no false hits.
 
 ## What changed, file by file
 
@@ -72,7 +90,11 @@ version before you decide.
 
 ## Not tested
 
-- `g2-check.sh` was tested on throwaway git repos (config-repo path, unnamed-file list, ID detection). The Maven path
+- `rule-check.sh` was tested on a seeded repo: every rule fired on new lines, old lines were ignored, and safe forms
+  (`Instant.now(clock)`, `${VAULT_TOKEN}`, `// shortcut:`) passed. Known gap: a warn rule's `unless` applies to the
+  whole line (`// EFFIE-123, UTF-8` is missed). Real-repo false-hit rates are unknown: watch the first few tasks.
+- The Testcontainers flow (`verification.md`) is guidance; no DTC repo has been run with it.
+- `g2-check.sh` was tested on throwaway git repos (config-repo path, unnamed-file list, ID detection, rule checks). The Maven path
   (JDK pick, trust store, `clean install`, the `Tests run:` line) has not been run against a real DTC repo. Run it once by
   hand on a finished task and compare with your own `mvn` output.
 - The full lean flow has not been run end to end in Kiro.

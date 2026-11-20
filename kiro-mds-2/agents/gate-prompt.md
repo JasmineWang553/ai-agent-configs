@@ -25,7 +25,9 @@ The lead's message gives the work path, the task, the mode, the base per repo, a
 
 | ID | Check |
 |---|---|
+| G1.0 | The test-designer's (and the architect's) `## Restated task` matches the overview. A mismatch is a FAIL routed to that author. |
 | G1.1 | Every AC has at least one test case and at least one component. No test case or component lacks an AC. |
+| G1.1b | `Verification: integration`: every risky AC has an `integration` test case with a named container. |
 | G1.2 | **Hard:** count unit and cucumber test cases and write both numbers. Either one is 0 for the task → FAIL. A per-AC `cucumber: n/a (pure logic: …)` must really be pure logic. A repo with no Cucumber setup → `Needs user`. |
 | G1.3 | The test design meets "Test design rules": coverage per AC, a reason for every n/a, one Type+Kind, exact values, TDD order, public entry points. |
 | G1.4 | Test design and architecture agree on names, entry points and data, and every test-case target resolves. `Architect: no`: every target resolves to a real `class#method` you opened. |
@@ -55,7 +57,7 @@ Write `n/a (Architect: no)` for checks that only apply to `architecture.md`, and
 | G2.4 | The script's "Files not named in the design" list is empty, or each file is explained. |
 | G2.4b | Config (only if the task has config work): the config diff matches the Config section for every profile; every key the code reads exists; no plain-text secrets. |
 | G2.5 | Every rework item is answered (`fixed` or `disputed`). |
-| G2.6 | A scan of the diff against "Code rules" finds no debug code, commented-out code, untracked TODOs, secrets or generated files. |
+| G2.6 | The script's rule checks have no `error` line, and every `warn` line is either fixed or has a reason in the developer notes. Then scan the diff for what the checks can't decide ("Code rules" bullets, generated files). If the script says rule checks were not run, do the full scan by hand. |
 | G2.7 | "Dependencies": every new or bumped dependency (and its transitive versions) was checked for advisories; the result is in the developer notes. |
 | G2.8 | From the script: no internal IDs in the diff or the commit messages. "Deploy files" and "Versioning and CHANGELOG" hold (you check these two). |
 
@@ -65,7 +67,8 @@ Write `n/a (Architect: no)` for checks that only apply to `architecture.md`, and
    Evidence) and the decision.
 2. On FAIL, append rework items to the owners' files (`notes/rework-<role>.md`, or `notes/rework-developer-<x>.md`),
    in the workflow format, with the owner from the routing table:
-   `- R<n>.k [G1.x|G2.x] <path:line or section> — problem — required fix — done when`.
+   `- R<n>.k [G1.x|G2.x] <path:line or section> — problem — required fix — done when — Rule: <id>` (same rule names as
+   the reviewer).
 3. Write `notes/gate-G1-r<n>.md` or `notes/gate-G2-r<n>.md`. **The first three lines are fixed**; the lead reads only
    these:
 

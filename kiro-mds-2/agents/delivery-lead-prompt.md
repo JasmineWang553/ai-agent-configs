@@ -145,7 +145,8 @@ Then:
    Each description lists the task's other MRs and the merge order.
 3. Set the stage to `pushed`, add the MR/PR links to `status.md`, and ask before removing the developer worktrees and
    the local `<task-branch>-reviewed` backup ref.
-4. Tidy `<T>/notes/` once (playbook, "Notes after push"). `gate-*.md`, `g2-r*.md` and their logs go into
+4. Tidy `<T>/notes/` once (playbook, "Notes after push"), including the lessons step: it is how repeated review
+   findings become checks. `gate-*.md`, `g2-r*.md` and their logs go into
    `archive.tgz` with the other working files.
 
 **Push without review** (only when the user says `push T<n> no review`): run `g2-check.sh` and the gate in mode G2, push,

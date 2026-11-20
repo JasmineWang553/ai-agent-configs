@@ -37,6 +37,10 @@ Coverage:
   - existing step text quoted exactly, and new steps marked `new step: <text>`;
   - no scenario that only repeats a unit case.
 - If the repo has no Cucumber setup at all, the user decides. Nobody passes it on their own.
+- **Integration (only when the overview says `Verification: integration`):** Destructive and contract behavior of the
+  message or data flow, proved against real infrastructure in Testcontainers (Kafka, LocalStack SQS/S3, MongoDB):
+  send a real message, assert the stored result, then the retry, the duplicate or replayed message, and the DLT/DLQ
+  path. Layer `integration`, at least one per risky AC. How: `~/.kiro/team/verification.md`.
 - **Config-only repo** (the config repo when it has no test setup): no unit or Cucumber test cases. Instead, one
   binding proof: a throwaway check in `<work>` that binds the changed files with the real service code (per profile)
   and prints the bound values.

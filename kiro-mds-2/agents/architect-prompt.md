@@ -22,6 +22,12 @@ the engineering standards (`standards/es-*.md`). Its "Pattern conformance" secti
 
 `T<n>/architecture.md`, from the template, with Status `draft`. Each round adds a row to its Rework log.
 
+## Restate first
+
+Before anything else, write `## Restated task` at the top of your notes file (``T<n>/notes/ar-r<n>.md``): 3-5 lines in your
+own words: what changes, for whom, what stays the same, and what done looks like. If you can't restate a part, or
+your restatement differs from the overview, return `NEEDS_DECISION` with the question. Don't start work on a guess.
+
 ## How to design
 
 1. Trace the existing flow from the entry point(s) end to end, citing `path:line`.

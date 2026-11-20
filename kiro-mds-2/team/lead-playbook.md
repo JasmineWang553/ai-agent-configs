@@ -161,7 +161,14 @@ Before the push, `notes/` is the working folder: never tidy it earlier, because 
    Take them from `review.md`, rework files and Questions answers.
 3. Pack everything else into `notes/archive.tgz`: `tar -czf archive.tgz <files>` (dev-*, rv-*, td-*, ar-*, rework-*,
    mr-feedback-*, drafts). Then delete the packed files, `msg/`, `signals/` and raw build logs.
-4. Result: `notes/` holds only `trace.md`, `decisions.md`, `archive.tgz`. Tell the user in one line.
+4. **Lessons (correct once, then automate):** for every reviewer finding and gate rework item of the task, append one
+   line to `~/Desktop/work/lessons.md` (shared by all work folders, create it if missing):
+   `<date> | <slug> T<n> | <Rule> | <finding ID> | <one-line problem>`. Then count each `Rule` over the whole file.
+   A rule seen in **2 or more tasks** that is not in `~/.kiro/checks/rules.tsv` yet: propose it to the user in one block:
+   the rule, the tasks, and either a draft `rules.tsv` line (id, severity, scope, match, unless, message) you tested
+   with `rule-check.sh` on this task's worktree, or "can't be a pattern check: <ArchUnit test | lint rule | keep in
+   prose>, because <reason>". Never edit `rules.tsv` or the standards yourself; the user adds the line.
+5. Result: `notes/` holds only `trace.md`, `decisions.md`, `archive.tgz`. Tell the user in one line.
 
 A later rework or MR-feedback round on a pushed task starts new working files next to them; tidy again after its push.
 

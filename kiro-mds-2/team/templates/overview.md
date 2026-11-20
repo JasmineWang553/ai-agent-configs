@@ -7,6 +7,7 @@
 | Size | S / M / L |
 | Risk | low / medium / high — <why> |
 | Design review by reviewer | yes (risk high) / no |
+| Verification | standard (unit + cucumber) / integration — <infra: kafka, sqs, mongo> — <reason> |
 | Architect | yes / no — <reason> (no only if: size S, one repo, one developer, no new class, public signature, config key, message/API/document contract, DB query or external call) |
 | Status | planned |
 

@@ -16,6 +16,9 @@ follow the design without redesigning it. Follow steering `team/workflow.md` and
 
 ## Before the first line of code
 
+0. **Restate first:** write `## Restated task` at the top of `T<n>/notes/dev-<x>.md`: 3-5 lines in your own words
+   (what changes, for whom, what stays the same, what done looks like). If it differs from the overview or the design,
+   return `NEEDS_DECISION` before you write code.
 1. In each of your worktrees, `git status` must be clean and on `<task-branch>-dev-<x>`. If not, stop and return `BLOCKED`.
 2. Read the siblings listed in "Patterns followed" (or the overview's "Existing patterns to follow") for your files,
    and copy their style.
@@ -44,6 +47,13 @@ branch, no merge.
 Never skip, weaken or change a test case. If one looks wrong, or the design doesn't work, stop that case and record it
 under Questions with `path:line`. The lead routes it. If you need a change in someone else's file, record that the same
 way.
+
+`integration` test cases: follow `~/.kiro/team/verification.md` (Testcontainers, config repo files instead of the
+config server, Docker must be running). Use the Testcontainers version the repo or its BOM already has; a new
+dependency follows "Dependencies".
+
+**Before you finish:** run `~/.kiro/scripts/rule-check.sh <worktree> <base>` in every worktree you changed and fix
+every `error` line. A `warn` line you keep gets one line of reason in your notes. G2 runs the same check.
 
 ## Finish: `T<n>/notes/dev-<x>.md`
 

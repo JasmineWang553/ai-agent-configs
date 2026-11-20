@@ -4,7 +4,8 @@
 # Usage: g2-check.sh <work> T<n> <round> <repo>=<base> [<repo>=<base> ...]   (repos in merge order)
 # Writes: <work>/T<n>/notes/g2-r<round>.md  (line 1: G2-SCRIPT: PASS|FAIL)
 #         <work>/T<n>/notes/g2-r<round>-<repo>.log  (raw Maven output per repo)
-# Checks: G2.1 full build + tests per repo (deps first, installed locally), G2.4 files not named in the design,
+# Checks: G2.1 full build + tests per repo (deps first, installed locally; Docker up when the repo uses Testcontainers),
+#         G2.4 files not named in the design, G2.6 rule checks on added lines (rule-check.sh + ~/.kiro/checks/rules.tsv),
 #         G2.8 internal IDs in added lines and commit messages. Everything else is the gate agent's job.
 # Bash 3.2 compatible (macOS default).
 
@@ -68,6 +69,14 @@ for spec in "$@"; do
   sha=$(git -C "$wt" rev-parse --short HEAD)
   heads="$heads $repo@$sha"
 
+  # Testcontainers needs Docker: fail fast instead of a 10-minute red build
+  if grep -rqsi testcontainers "$wt/pom.xml" "$wt/src/test" 2>/dev/null && ! docker info >/dev/null 2>&1; then
+    status=FAIL
+    builds="$builds- $repo @ $sha: NOT BUILT — repo uses Testcontainers and Docker is not running (start Docker Desktop, re-run)
+"
+    continue
+  fi
+
   # G2.1 build + tests
   if [ -f "$wt/pom.xml" ]; then
     log="$NOTES/g2-r$ROUND-$repo.log"
@@ -119,6 +128,17 @@ for spec in "$@"; do
     details="$details$unnamed"
   fi
 
+  # G2.6 rule checks (added lines only)
+  rules_out=$("$(dirname "$0")/rule-check.sh" "$wt" "$base")
+  rc_rules=$?
+  if [ -n "$rules_out" ]; then
+    note "  Rule checks (G2.6; error = FAIL, warn = gate judges):"
+    details="$details$(echo "$rules_out" | sed 's/^/    /')
+"
+  fi
+  [ $rc_rules -eq 1 ] && status=FAIL
+  [ $rc_rules -eq 2 ] && note "  Rule checks NOT run: rules file missing (gate checks G2.6 by hand)"
+
   # G2.8 internal IDs in added lines and commit messages
   hits=$(git -C "$wt" --no-pager diff "$base"...HEAD | grep -E '^\+[^+]' | grep -nE "$ID_RE" | head -10)
   mhits=$(git -C "$wt" --no-pager log --format=%B "$base"..HEAD | grep -nE "$ID_RE" | head -10)
@@ -140,7 +160,7 @@ done
   echo "## Builds (G2.1)"
   printf '%s' "$builds"
   echo
-  echo "## Checks (G2.4, G2.8)"
+  echo "## Checks (G2.4, G2.6, G2.8)"
   printf '%s' "$details"
 } > "$OUT"
 

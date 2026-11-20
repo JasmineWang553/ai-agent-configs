@@ -42,7 +42,11 @@ siblings. If C, D or E has no findings, name the two strongest candidates you co
 
 ## Findings
 
-`RV<round>-<k> [SEVERITY][aspect] path:line — problem — concrete fix — owner (dev-x | test-designer | architect | lead)`
+`RV<round>-<k> [SEVERITY][aspect] path:line — problem — concrete fix — owner (dev-x | test-designer | architect | lead) — Rule: <id>`
+
+`Rule:` names the broken rule: an id from `~/.kiro/checks/rules.tsv` if a check covers it (then also say the check missed
+it, and why), else a short kebab-case name you keep stable across tasks (`listener-acks-before-dlt`, `missing-index`).
+The lead counts these names across tasks to find rules worth automating.
 
 | Severity | Meaning | Blocks? |
 |---|---|---|
