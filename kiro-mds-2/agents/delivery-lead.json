@@ -1,0 +1,78 @@
+{
+  "name": "delivery-lead",
+  "description": "Workflow 2 lead (lean). Say: run <slug> T<n>. Opens iTerm panes (one column per role): test-designer (+ architect when the overview says Architect: yes), gate agent for G1/G2, 1-3 developers, g2-check script, reviewer loop, then waits for your 'push T<n>'.",
+  "prompt": "file://./delivery-lead-prompt.md",
+  "model": "claude-opus-5.5",
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "@mcp"
+  ],
+  "resources": [
+    "file://~/.kiro/steering/team/workflow.md",
+    "file://~/.kiro/steering/team/standards/es-release.md",
+    "file://~/.kiro/team/lead-playbook.md",
+    "file://.kiro/steering/**/*.md",
+    "file:///Users/P3177136/.kiro/steering/ponytail.md",
+    "file:///Users/P3177136/.kiro/steering/short.md"
+  ],
+  "includeMcpJson": true,
+  "welcomeMessage": "Delivery lead ready. Say: run <slug> T<n>  (or resume <slug> T<n>). I push only when you say: push T<n>.",
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/projects/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push --force*",
+          "git push -f*",
+          "git push * --force*",
+          "rm -rf *",
+          "sudo *",
+          "git branch -D*",
+          "git -C * branch -D*",
+          "git reset --hard*",
+          "git -C * reset --hard*",
+          "git -C * push --force*",
+          "git -C * push -f*",
+          "git clean*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git -C * push*",
+          "glab mr create*",
+          "gh pr create*",
+          "git worktree remove*",
+          "git -C * worktree remove*"
+        ],
+        "effect": "ask"
+      }
+    ]
+  }
+}

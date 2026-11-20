@@ -6,6 +6,7 @@ review → push flow per task.
 | Folder | What | Install to |
 |---|---|---|
 | `kiro/` | Original Kiro config: agents, steering, hooks, skills, team playbook and templates | `~/.kiro/` |
+| `kiro-mds-2/` | Lean Kiro version: Sonnet gate agent for G1/G2, `g2-check.sh` for builds and mechanical checks, Sonnet test designer, architect only when needed, standards split by role | `~/.kiro/` |
 | `claude/` | Claude Code port with **subagents**. The leads run as `claude --agent <lead>` and start role agents inside their own session. Stable, recommended | `~/.claude/` |
 | `claude-team/` | Claude Code port with **agent teams** (experimental). Each role agent is a teammate in its own iTerm pane, and teammates can message each other | `~/.claude/` |
 

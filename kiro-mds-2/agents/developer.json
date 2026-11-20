@@ -1,0 +1,97 @@
+{
+  "name": "developer",
+  "description": "Implements its assigned files and test cases with strict TDD in its own git worktree. Opened in an iTerm pane by delivery-lead (1-3 in parallel). Java/Spring Boot/Kafka/SQS/DocumentDB/Cucumber.",
+  "prompt": "file://./developer-prompt.md",
+  "model": "claude-sonnet-5.5",
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "@chrome-devtools"
+  ],
+  "resources": [
+    "file://~/.kiro/steering/team/workflow.md",
+    "file://~/.kiro/steering/team/standards/es-core.md",
+    "file://~/.kiro/steering/team/standards/es-code.md",
+    "file://~/.kiro/steering/team/standards/es-tests.md",
+    "file://~/.kiro/steering/team/standards/es-config.md",
+    "file://~/.kiro/steering/team/standards/es-release.md",
+    "file://.kiro/steering/**/*.md",
+    "file:///Users/P3177136/.kiro/steering/ponytail.md",
+    "file:///Users/P3177136/.kiro/steering/short.md"
+  ],
+  "includeMcpJson": true,
+  "welcomeMessage": "Developer ready. Opened by delivery-lead: I build. Direct: I ask questions first, then plan, then code.",
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/wt/**",
+          "/Users/P3177136/Desktop/work/*/T*/notes/dev-*.md",
+          "/Users/P3177136/Desktop/work/*/T*/notes/signals/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/T*/*.md",
+          "/Users/P3177136/Desktop/work/*/*.md",
+          "/Users/P3177136/Desktop/projects/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push --force*",
+          "git push -f*",
+          "git push * --force*",
+          "rm -rf *",
+          "sudo *",
+          "git branch -D*",
+          "git -C * branch -D*",
+          "git reset --hard*",
+          "git -C * reset --hard*",
+          "git -C * push --force*",
+          "git -C * push -f*",
+          "git clean*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git -C * push*",
+          "git -C * merge*",
+          "git -C * rebase*",
+          "git -C * worktree*",
+          "glab mr create*",
+          "gh pr create*",
+          "git merge*",
+          "git rebase*",
+          "git worktree*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git checkout*",
+          "git switch*"
+        ],
+        "effect": "deny"
+      }
+    ]
+  }
+}

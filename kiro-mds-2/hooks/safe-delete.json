@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Safe delete: backup rm/mv targets, block destructive commands",
+      "trigger": "PreToolUse",
+      "description": "Copies files to /tmp/kiro-trash before rm or mv. Blocks git reset --hard, git clean -f, force push, rm of / or home.",
+      "matcher": "shell|bash|execute_bash",
+      "action": {
+        "type": "command",
+        "command": "python3 ~/.kiro/scripts/safe-delete.py",
+        "timeout": 30
+      }
+    }
+  ]
+}
