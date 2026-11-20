@@ -1,0 +1,102 @@
+{
+  "name": "planner",
+  "description": "Planning council member (sub-agent of planning-lead only). Drafts or critiques a task breakdown through one lens: slicing or risk. Read-only on code.",
+  "prompt": "file://./planner-prompt.md",
+  "model": "claude-opus-5.5",
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "@chrome-devtools"
+  ],
+  "resources": [
+    "file://~/.kiro/steering/team/workflow.md",
+    "file://~/.kiro/steering/team/standards/es-core.md",
+    "file://~/.kiro/steering/team/standards/es-config.md",
+    "file://.kiro/steering/**/*.md",
+    "file:///Users/P3177136/.kiro/steering/ponytail.md",
+    "file:///Users/P3177136/.kiro/steering/short.md"
+  ],
+  "includeMcpJson": true,
+  "welcomeMessage": "Planner ready. I am normally opened in a pane by planning-lead.",
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/planning/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/*.md",
+          "/Users/P3177136/Desktop/work/*/T*/**",
+          "/Users/P3177136/Desktop/work/*/wt/**",
+          "/Users/P3177136/Desktop/projects/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push --force*",
+          "git push -f*",
+          "git push * --force*",
+          "rm -rf *",
+          "sudo *",
+          "git branch -D*",
+          "git -C * branch -D*",
+          "git reset --hard*",
+          "git -C * reset --hard*",
+          "git -C * push --force*",
+          "git -C * push -f*",
+          "git clean*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git -C * push*",
+          "git -C * merge*",
+          "git -C * rebase*",
+          "git -C * worktree*",
+          "glab mr create*",
+          "gh pr create*",
+          "git merge*",
+          "git rebase*",
+          "git worktree*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git commit*",
+          "git -C * commit*",
+          "git checkout*",
+          "git switch*",
+          "git reset*",
+          "git stash*",
+          "git cherry-pick*",
+          "git revert*",
+          "git tag*",
+          "mvn*",
+          "./mvnw*"
+        ],
+        "effect": "deny"
+      }
+    ]
+  }
+}

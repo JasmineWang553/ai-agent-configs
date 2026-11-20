@@ -1,0 +1,94 @@
+{
+  "name": "planning-lead",
+  "description": "Workflow 1 chair. Talk to it with a new requirement. Runs a 3-member planning council (itself + 2 planners in iTerm panes), writes plan.md and T<n>/overview.md per task, gets your approval.",
+  "prompt": "file://./planning-lead-prompt.md",
+  "model": "claude-opus-5.5",
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "@mcp"
+  ],
+  "resources": [
+    "file://~/.kiro/steering/team/workflow.md",
+    "file://~/.kiro/steering/team/standards/es-core.md",
+    "file://~/.kiro/steering/team/standards/es-config.md",
+    "file://~/.kiro/team/lead-playbook.md",
+    "file://.kiro/steering/**/*.md",
+    "file:///Users/P3177136/.kiro/steering/ponytail.md",
+    "file:///Users/P3177136/.kiro/steering/short.md"
+  ],
+  "includeMcpJson": true,
+  "welcomeMessage": "Planning lead ready. Give me the requirement (ticket, goal, repos), or say: resume <slug>.",
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/projects/**",
+          "/Users/P3177136/Desktop/work/*/wt/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push --force*",
+          "git push -f*",
+          "git push * --force*",
+          "rm -rf *",
+          "sudo *",
+          "git branch -D*",
+          "git -C * branch -D*",
+          "git reset --hard*",
+          "git -C * reset --hard*",
+          "git -C * push --force*",
+          "git -C * push -f*",
+          "git clean*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git -C * push*",
+          "git -C * merge*",
+          "git -C * rebase*",
+          "git -C * worktree*",
+          "glab mr create*",
+          "gh pr create*",
+          "git merge*",
+          "git rebase*",
+          "git worktree*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git commit*",
+          "git checkout*",
+          "git switch*",
+          "git reset*"
+        ],
+        "effect": "deny"
+      }
+    ]
+  }
+}

@@ -1,0 +1,117 @@
+{
+  "name": "gate",
+  "description": "Gate checker (lean flow). Runs the delivery-lead's G1 design gate and the judgment part of G2 (after g2-check.sh), writes the gate section of review.md, a gate file with PASS/FAIL on line 1, and rework items. Opened in an iTerm pane by delivery-lead. No code, no builds.",
+  "prompt": "file://./gate-prompt.md",
+  "model": "claude-sonnet-5.5",
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "@chrome-devtools"
+  ],
+  "resources": [
+    "file://~/.kiro/steering/team/workflow.md",
+    "file://~/.kiro/steering/team/standards/es-core.md",
+    "file://~/.kiro/steering/team/standards/es-code.md",
+    "file://~/.kiro/steering/team/standards/es-config.md",
+    "file://~/.kiro/steering/team/standards/es-release.md",
+    "file://~/.kiro/steering/team/standards/es-tests.md",
+    "file://.kiro/steering/**/*.md",
+    "file:///Users/P3177136/.kiro/steering/ponytail.md",
+    "file:///Users/P3177136/.kiro/steering/short.md"
+  ],
+  "includeMcpJson": true,
+  "welcomeMessage": "Gate ready. I am normally opened in a pane by delivery-lead.",
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/T*/review.md",
+          "/Users/P3177136/Desktop/work/*/T*/notes/gate-*.md",
+          "/Users/P3177136/Desktop/work/*/T*/notes/rework-*.md",
+          "/Users/P3177136/Desktop/work/*/T*/notes/trace.md",
+          "/Users/P3177136/Desktop/work/*/T*/notes/signals/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/T*/overview.md",
+          "/Users/P3177136/Desktop/work/*/T*/test-design.md",
+          "/Users/P3177136/Desktop/work/*/T*/architecture.md"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/projects/**",
+          "/Users/P3177136/Desktop/work/*/wt/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push --force*",
+          "git push -f*",
+          "git push * --force*",
+          "rm -rf *",
+          "sudo *",
+          "git branch -D*",
+          "git -C * branch -D*",
+          "git reset --hard*",
+          "git -C * reset --hard*",
+          "git -C * push --force*",
+          "git -C * push -f*",
+          "git clean*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git -C * push*",
+          "git -C * merge*",
+          "git -C * rebase*",
+          "git -C * worktree*",
+          "glab mr create*",
+          "gh pr create*",
+          "git merge*",
+          "git rebase*",
+          "git worktree*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git commit*",
+          "git checkout*",
+          "git switch*",
+          "git reset*",
+          "git stash*",
+          "git cherry-pick*",
+          "git revert*",
+          "git -C * commit*",
+          "git tag*",
+          "mvn*",
+          "./mvnw*",
+          "git -C * checkout*"
+        ],
+        "effect": "deny"
+      }
+    ]
+  }
+}
