@@ -1,0 +1,11 @@
+#!/bin/sh
+# Rejects internal team IDs (AC, TC, RV, R<n>.<k>, G<n>.<k>) in commit messages (engineering standards, "Repo hygiene").
+# Installed per task worktree by delivery-lead: git -C <wt> config --worktree core.hooksPath ~/.claude/scripts/git-hooks
+msg_file="$1"
+hits=$(grep -v '^#' "$msg_file" | grep -nE '(\bT[0-9]+-)?\b(TC|AC)-?[0-9]+\b|\bRV[0-9]+-[0-9]+\b|\bR[0-9]+\.[0-9]+\b|\bG[0-9]\.[0-9]+\b')
+if [ -n "$hits" ]; then
+  echo "commit-msg: internal IDs are not allowed in commit messages (keep them in <work> files):" >&2
+  echo "$hits" >&2
+  exit 1
+fi
+exit 0

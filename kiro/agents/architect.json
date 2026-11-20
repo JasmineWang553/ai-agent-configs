@@ -1,0 +1,109 @@
+{
+  "name": "architect",
+  "description": "Writes T<n>/architecture.md: low-level design, patterns followed, signatures, failure paths, work split for developers. Opened in an iTerm pane by delivery-lead. No production code.",
+  "prompt": "file://./architect-prompt.md",
+  "model": "claude-opus-5.5",
+  "tools": [
+    "read",
+    "write",
+    "shell",
+    "@chrome-devtools"
+  ],
+  "resources": [
+    "file://~/.kiro/steering/team/**/*.md",
+    "file://.kiro/steering/**/*.md",
+    "file:///Users/P3177136/.kiro/steering/ponytail.md",
+    "file:///Users/P3177136/.kiro/steering/short.md"
+  ],
+  "includeMcpJson": true,
+  "welcomeMessage": "Architect ready. I am normally opened in a pane by delivery-lead.",
+  "permissions": {
+    "rules": [
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/T*/architecture.md",
+          "/Users/P3177136/Desktop/work/*/T*/notes/ar-*.md",
+          "/Users/P3177136/Desktop/work/*/T*/notes/signals/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/work/*/T*/overview.md",
+          "/Users/P3177136/Desktop/work/*/T*/test-design.md",
+          "/Users/P3177136/Desktop/work/*/T*/review.md"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "/Users/P3177136/Desktop/projects/**",
+          "/Users/P3177136/Desktop/work/*/wt/**"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "effect": "allow"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push --force*",
+          "git push -f*",
+          "git push * --force*",
+          "rm -rf *",
+          "sudo *",
+          "git branch -D*",
+          "git -C * branch -D*",
+          "git reset --hard*",
+          "git -C * reset --hard*",
+          "git -C * push --force*",
+          "git -C * push -f*",
+          "git clean*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git push*",
+          "git -C * push*",
+          "git -C * merge*",
+          "git -C * rebase*",
+          "git -C * worktree*",
+          "glab mr create*",
+          "gh pr create*",
+          "git merge*",
+          "git rebase*",
+          "git worktree*"
+        ],
+        "effect": "deny"
+      },
+      {
+        "capability": "shell",
+        "match": [
+          "git commit*",
+          "git -C * commit*",
+          "git checkout*",
+          "git switch*",
+          "git reset*",
+          "git stash*",
+          "git cherry-pick*",
+          "git revert*",
+          "git tag*",
+          "mvn*",
+          "./mvnw*"
+        ],
+        "effect": "deny"
+      }
+    ]
+  }
+}
